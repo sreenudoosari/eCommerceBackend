@@ -27,15 +27,8 @@ const products=[
         res.send(product);
     })
     //get product by query parameters
-    app.get('/api/Products/id?filterBy=name',(req,res)=>{
-        //const product=products.find(p=> p.id===parseInt(req.params.id));
-        //console.log("query params",req.params.nameofproduct);
-        //console.log(logger); 
-        //logger.log("Error Message");
-       // if(!product) res.status(404).send(`product with id = ${req.params.id} is not found`);
-        //console.log("query params",filterBy);
-        console.log(req.query);
-        //res.send(req.query);
+    app.get('/api/Products/:year/:month/?sortBy=name',(req,res)=>{
+        res.send(req.query);
 
     })
 const port=process.env.ECBPORT || 3000;
