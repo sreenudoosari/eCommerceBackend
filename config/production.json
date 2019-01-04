@@ -1,0 +1,10 @@
+{
+    "app": {
+          "name" :"E-Commerce Backend Project--production"
+           },
+     
+     "mail":{
+           "host":"production host server mail"
+            }      
+  
+  }

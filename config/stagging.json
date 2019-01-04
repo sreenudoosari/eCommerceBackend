@@ -1,0 +1,10 @@
+{
+    "app": {
+          "name" :"E-Commerce Backend Project--Stagging"
+           },
+     
+     "mail":{
+           "host":"stagging host server mail"
+            }      
+  
+  }
