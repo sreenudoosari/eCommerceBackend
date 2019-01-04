@@ -1,7 +1,7 @@
 const express = require('express');
 const router =express.Router();
 const Joi = require("joi");
-const users=require('../db/users');
+const users=require('../database/users');
 
 //USER DETAILS
 //1.get all users

@@ -1,5 +1,6 @@
+const logger=require('../utils/logger');
 function logging(req,res,next){
-    console.log("logging the details.......");
+    logger.log("logging the details.......123");
     next();
 }
 module.exports=logging;
