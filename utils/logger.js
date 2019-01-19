@@ -1,5 +1,4 @@
-function log(req,res,next){
-    console.log("Requested login url:" , req.originalUrl);
-    next();
+function log(message){
+    console.log(message);
 }
-module.exports = log;
+module.exports.log = log;

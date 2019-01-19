@@ -1,5 +1,15 @@
 html
-   head
-    title=appTitle
-    body 
-     h3=message
+  head
+  title=appTitle
+  body 
+  h3=message
+    form(action="/", method="post")
+      div    
+        label(for="firstName") FirstName:
+        input(name="firstName" value="")
+      br
+      div
+        label(for="lastName") LastName:
+        input(name="lastName" value="")
+      br
+      button(type="submit") Send Details

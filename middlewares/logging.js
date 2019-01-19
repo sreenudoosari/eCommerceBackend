@@ -1,6 +1,7 @@
 const logger=require('../utils/logger');
 function logging(req,res,next){
-    logger.log("logging the details.......123");
+   // console.log(`Requested login url:`,req.originalUrl);
+    //logger.log("hello");
     next();
 }
-module.exports=logging;
+module.exports = logging;
