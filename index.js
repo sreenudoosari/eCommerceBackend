@@ -20,19 +20,23 @@ const homerouter=require('./routes/home');
 mongoose.connect("mongodb://localhost/ecommercebackend")
         .then(() => console.log("Succefully connected to mongodb...."))
         .catch((err)=> console.log("Failed to connect to db....", err));
+
+
 //add a middle ware to convert your json bodycle
 app.use(express.json());
 app.use(authenticate);
 app.use(bodyparser.json());
-//configuration the files
 
+//configuration the files
 app.use('/api',productrouter);
 app.use('/api/user',usersrouter);
 app.use('/api/home',homerouter);
+
 //views folder
 app.set('view engine', 'pug');
 app.set('views','./views');
 app.use(express.static('public'));
+
 //third party middlewares
 app.use(morgan("tiny"));
 

@@ -1,8 +1,10 @@
-const userList=[
-    {id:1,name:"usha"},
-    {id:2,name:"shiva"},
-    {id:3,name:"kamal"},
-    {id:4,name:"sai"}
-    ]
+const mongoose=require('mongoose');
 
-    module.exports.user_lists=userList;
+const userSchema= new mongoose.Schema({
+    name: {
+        type :String,
+           minlength :5,
+           maxlength :50,
+           required :true},
+    });  
+module.exports = mongoose.model('User', userSchema);

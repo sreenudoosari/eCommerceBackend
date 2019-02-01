@@ -11,6 +11,11 @@ const productSchema= new mongoose.Schema({
     price: Number,
     display: Boolean,
     entryDate: {type:Date,default:Date.now},
+    category:{
+        type:String,
+        required:true,
+        enum :["Men","Women","Kids","General"]
+    },
     tags: [String]
     })
 const Product= mongoose.model("Product" ,productSchema);
@@ -20,8 +25,17 @@ async function createNewProduct(){
         description:"A good medicine for fever",
         price: 20,
         display: true,
-        tags: ["Medicines","Pharmacy","Fever"]
+        category: ["General"],
+        tags: ["Men"],
+
+        name:"Maxliase",
+        description:"A good medicine for throat pain",
+        price: 20,
+        display: true,
+        category: ["Women"],
+        tags: ["Women"]
         });
+        
     const result=await product.save();
     console.log("saved product is:",result);
 } 
@@ -30,4 +44,8 @@ async function createNewProduct(){
      const products= await Product.find();
      console.log(products);
  }
- getAllProducts();
+ async function getAllProductsByCategory(){
+     const products= await Product.find({category :"Women"});
+     console.log(products);
+ }
+  getAllProductsByCategory();

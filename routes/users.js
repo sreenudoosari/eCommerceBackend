@@ -1,64 +1,84 @@
 const express = require('express');
+const mongoose=require('mongoose');
 const router =express.Router();
 const Joi = require("joi");
-const users=require('../database/users');
 
-//USER DETAILS
-//1.get all users
-const userlists=users.user_lists;
-router.get('/', (req, res) => {
-     res.send(userlists);
-  }) 
-  //2.get user by Id
-  router.get('/:id', (req, res) => {
-    const user =  userlists.find(p => p.id === parseInt(req.params.id));
-    if(!user) return res.status(404).send(`user with id = ${req.params.id} is not found`);
-    res.send(user);
-    }) 
- //3.creating a user
- router.post('/', (req,res) => {
-    if(!req.body.name || req.body.name.length<4){
+const User=require('../database/users');
+
+//--getting the users--
+router.get("/", (req,res,next) => {
+    User.find()
+           .then(result => {
+             res.status(200).json(result);
+         })
+           .catch(err => {
+               res.status(500).json({error :err});
+           });
+});
+//--getting the user by id--
+router.get("/:id",(req,res,next) =>{
+    const id = req.params.id;
+    console.log(id);
+    User.findById(id)
+           .then(result => {
+               if(result){
+                res.status(200).json(result);
+               }else{
+                res.status(404).json({message : 'No Valid ID is provided'});
+               }
+           })
+           .catch(err => {
+               res.status(500).json({error : err});
+           });        
+});
+
+//--creating a users--
+router.post('/', (req,res) => {
+    if(!req.body.name || req.body.name.length<5){
         res.status(400).send("Name is required and should contains 5 characters");
     }
-    const schema = {
-        name : Joi.string().min(3).required()
-    };
-   const result =  Joi.validate(req.body,schema);
-    console.log(result);
-    if(result.error )  return  res.status(400).send(result.error.details[0].message);
-    const user =userlists.reduce((accu,curr)=>({id : curr.id}))
-    const  maxId=user.id + 1;
-    const newUser = {
-        id: maxId,
-        name : req.body.name
-    }
-    userlists.push(newUser);
-    res.send(newUser);
- })
- 
-//4.updating the users
-router.put('/:id', (req,res) => {
-  
-    const user =  userlists.find(p => p.id === parseInt(req.params.id));
-   if(!user) return res.status(404).send(`user with id = ${req.params.id} is not found`);
- 
    const schema = {
-       name : Joi.string().min(3).required()
-   };
+       name : Joi.string().min(5).max(50).required(),
+    };
   const result =  Joi.validate(req.body,schema);
-   if(result.error )return res.status(400).send(result.error.details[0].message);
-   user.name = req.body.name;
-   res.send(user);
-})
-//5.Deleting products
-router.delete('/:id', (req,res) => {
-   const user =  userlists.find(p => p.id === parseInt(req.params.id));
-   if(!user) return res.status(404).send(`product with id = ${req.params.id} is not found`);
- 
-   const indexOfProduct = userlists.indexOf(user);
-   userlists.splice(indexOfProduct,1);
-   res.status(200).send(`deleted the user`);
-   res.send();
-})
+   if(result.error )  return  res.status(400).send(result.error.details[0].message);
+     const user=new User({
+        id: req.params.id,
+        name: req.body.name,
+     });
+    user.save()
+           .then(result =>{
+              res.status(201).json({message : 'created user successfully'});
+            })
+           .catch(error => {
+            res.status(500).json({error :err});
+           });
+
+res.send(user);
+});
+
+//--updating the products--
+router.put("/:id" , (req,res,next) =>{
+    const id=req.params.id;
+    User.update({_id :id }, req.body)
+           .then(result =>{
+               res.status(200).json({message : "User updated"});
+           }) 
+           .catch(err =>{
+               res.status(500).json({error :err});
+           });
+});
+
+//--deleting the products--
+router.delete("/:id" , (req,res,next) =>{
+    const id=req.params.id;
+    User.remove({_id :id })
+           .then(result =>{
+               res.status(200).json({message : "user deleted"});
+           }) 
+           .catch(err =>{
+               res.status(500).json({error :err});
+           });
+});
 
 module.exports=router;
