@@ -11,9 +11,12 @@ const mongoose=require('mongoose');
 
 
 const app = express();
+
 //Routers is added
 const productrouter=require('./routes/products');
+const orderrouter=require('./routes/orders');
 const usersrouter=require('./routes/users');
+const employerrouter=require('./routes/employers');
 const homerouter=require('./routes/home');
 
 //Connecting to th Database
@@ -29,7 +32,9 @@ app.use(bodyparser.json());
 
 //configuration the files
 app.use('/api',productrouter);
-app.use('/api/user',usersrouter);
+app.use('/api/orders',orderrouter);
+app.use('/api/users',usersrouter);
+app.use('/api/employers',employerrouter);
 app.use('/api/home',homerouter);
 
 //views folder
