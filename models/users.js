@@ -1,11 +1,13 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
+const Joi = require('joi');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 
-const userSchema= new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
              minlength :5,
-             maxlength :50,
+             maxlength :55,
              required :true
           },
     address: String,
@@ -13,6 +15,7 @@ const userSchema= new mongoose.Schema({
         type: String,
              minlength :15,
              maxlength :250,
+             required :true,
              unique :true
           },
     password:{
@@ -23,5 +26,26 @@ const userSchema= new mongoose.Schema({
           },
     phoneno: Number,
     carddetails: Number
-    });  
-module.exports = mongoose.model('Users', userSchema);
+    });
+
+
+userSchema.methods.generateAuthToken = function() 
+ {
+    const token = jwt.sign({_id : this._id}, config.get('app.jwtPrivateKey'));
+    return token;
+}
+const User = mongoose.model('User', userSchema);
+function validateUser(user)
+{
+    const schema = {
+        name : Joi.string().min(5).max(50).required(),
+        address : Joi.string().required(),
+        email :Joi.string().min(15).max(250).required().email(),
+        password: Joi.string().min(8).max(150).required(),
+        phoneno: Joi.number().required(),
+        carddetails: Joi.number().required()
+       }
+    return Joi.validate(user , schema);
+}
+exports.User = User;
+exports.validate = validateUser;

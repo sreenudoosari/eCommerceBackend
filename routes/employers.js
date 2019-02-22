@@ -2,88 +2,78 @@ const express = require('express');
 const mongoose=require('mongoose');
 const router =express.Router();
 const Joi = require('joi');
+const auth = require('../middlewares/authentication');
 
-const Employer = require('../models/employers');
+const {Employer,validate} = require('../models/employers');
 
 //--getting all employers--
-router.get("/", (req,res,next) => {
-    Employer.find()
-           .then(result => {
-               res.status(200).json(result);
-         })
-           .catch(err => {
-               res.status(500).json({error :err});
-           });
-});
+router.get("/",auth, async (req,res,next) => {
+    try{
+        const employers = await Employer.find();
+        res.status(200).json(employers);
+        }catch(error){
+          res.status(500).json({error :err});
+        }
+    });
+
 //--getting the Employer by id--
-router.get("/:empId",(req,res,next) =>{
+router.get("/:empId",async (req,res,next) =>{
     const id = req.params.empId;
-    Employer.findById(id)
-           .then(result => {
-               if(result){
-                res.status(200).json(result);
-               }else{
-                res.status(404).json({message : 'No Valid ID is provided'});
-               }
-           })
-           .catch(err => {
-               res.status(500).json({error : err});
-           });        
-});
+    try{
+        const employers = await Employer.findById({_id :id});
+        if(employers){
+            res.status(200).json(employers);
+        }else{
+            res.status(401).json({message : 'empId is not available'});
+        }
+           }catch(error){
+            res.status(404).json({error : 'No valid empId is provided'});
+        }
+    });
+
 //--creating a Employer--
-router.post("/", (req,res) => {
+router.post("/", auth,async (req,res,next) => {
     if(!req.body.name || req.body.name.length<5){
         res.status(400).send("Name is required and should contains 5 characters");
     }
-   const schema = {
-        name : Joi.string().min(5).max(50).required(),
-        designation :Joi.string().required(),
-        address: Joi.string().required(),
-        email: Joi.string().required(),
-        phoneno: Joi.number().required()
-   };
-  const result =  Joi.validate(req.body,schema);
-   if(result.error)  return  res.status(400).send(result.error.details[0].message);
-     const employer=new Employer({
-        name: req.body.name,
-        designation: req.body.designation,
-        address: req.body.address,
-        email: req.body.email,
-        phoneno: req.body.phoneno
-     });
-    employer.save()
-           .then(result =>{
-              res.status(201).json( {message : 'created employer successfully'});
-            })
-           .catch(error => {
-            res.status(500).json({error :err});
-           });
-
-res.send(employer);
-});
+    const {error} =  validate(req.body);
+    if(error)  
+        res.status(400).send(error.details[0].message);
+      try{    
+        const employer = await new Employer({
+            name: req.body.name,
+            designation: req.body.designation,
+            address: req.body.address,
+            email: req.body.email,
+            phoneno: req.body.phoneno
+         });
+     await employer.save();
+     res.status(201).json({employer : 'created employer successfully'});
+    }   
+    catch(err){
+        res.status(500).json({error :err});
+    }
+});   
 
 //--updating the employers--
-router.put("/:empId" , (req,res,next) =>{
-    const id=req.params.empId;
-    Employer.update({_id :id }, req.body)
-           .then(result =>{
-               res.status(200).json({message : "employer updated"});
-           }) 
-           .catch(err =>{
-               res.status(500).json({error :err});
-           });
-});
+router.put("/:empId" , auth,async (req,res,next) =>{
+    const id = req.params.empId;
+    try{
+        const employer = await Employer.update({_id :id }, req.body);
+        res.status(200).json({employer : 'employers  updated'});   
+      }catch(error){
+        res.status(404).json({error : 'No valid empId is provided'});
+      }         
+    });
 
 //--deleting the employers--
-router.delete("/:empId" , (req,res,next) =>{
-    const id=req.params.empId;
-    Employer.remove({_id :id })
-           .then(result =>{
-               res.status(200).json({message : "employer deleted"});
-           }) 
-           .catch(err =>{
-               res.status(500).json({error :err});
-           });
-});
+router.delete("/:empId" , async (req,res,next) =>{
+    const id = req.params.empId;
+    try{
+        const employer = await Employer.deleteOne({_id :id });
+        res.status(200).json({employer : "employers  deleted"});  
+     }catch(error){
+        res.status(404).json({error : 'No valid empId is provided'});
+      }});
 
-module.exports=router;
+module.exports = router;

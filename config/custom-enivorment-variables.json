@@ -1,5 +1,8 @@
 {
-
+    "app": {
+         "jwtPrivateKey" : "ecommerce_jwt_secretkey"
+           },
+    
     "mail" :{
         "password" :"abc_mail_server_pwd"
             }

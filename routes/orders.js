@@ -1,89 +1,78 @@
 const express = require('express');
 const mongoose=require('mongoose');
 const router =express.Router();
-const Joi = require("joi");
+const Joi = require('joi');
+const auth = require('../middlewares/authentication');
+const {Order} = require('../models/orders');
+const {Product} = require('../models/products');
+const {User} = require('../models/users');
 
-const Order=require('../models/orders');
-const Product=require('../models/products');
-const User=require('../models/users');
-
-//--getting the orders--
-router.get("/", (req,res,next) => {
-    Order.find()     
-         .select('user product _id')
-         .then(result => {
-             res.status(200).json(result);
-         })
-           .catch(err => {
-               res.status(500).json({error :err});
-           });
+//getting all orders
+router.get('/' , auth,async (req,res) =>{
+  try{
+    const order = await Order.find();
+    res.status(200).json(order);
+  }catch(error){
+    res.status(500).json({message: "No Orders found"});
+  }
 });
-//--getting the order by id--
-router.get("/:orderId",(req,res,next) =>{
-    const id = req.params.orderId;
-    Order.findById(id)
-           .then(result => {
-               if(result){
-                res.status(200).json(result);
-               }else{
-                res.status(404).json({message : 'No Valid ID is provided'});
-               }
-           })
-           .catch(err => {
-               res.status(500).json({error : err});
-           });        
+//getting order by Id
+router.get("/:orderId", auth, async (req,res,next) => {
+  const id = req.params.orderId;
+  try{
+    const order = await Order.findById({_id :id });
+    if(order){
+    res.status(200).json(order);
+    }else{
+      res.status(401).json({message :'orderId is not available'}); 
+    }   
+   }
+   catch(error){
+     res.status(404).json({error : 'No valid orderId is provided'});
+   }         
 });
 
 //--creating a orders--
-router.post("/", (req,res,next) => {
-    User.findById(req.body.userId)
-        .then(user =>{
-            if(!user){
-                return res.status(404).json({message :"User is not found"});
-            }
-    Product.findById(req.body.productId)
-           .then(product =>{
-               if(!product){
-                   return res.status(404).json({message :"Product is not found"});
-               }
-            const order = new Order({
-                user: req.body.userId,
-                product: req.body.productId,    
-            });
-            return order.save();
-        })
-    })
-        .then(result =>{
-            console.log(result);
-            res.status(201).json({message : "order created"});
-            })
-           .catch(err => {
-            res.status(500).json({error : err});
-            });
+router.post("/", auth,async (req,res,next) => {
+   const user = await User.findById(req.body.user);
+   if(!user){
+      return res.status(404).json({message :'User is not found'});
+  }
+    const product =  await Product.findById(req.body.product);
+    if(!product){
+        return res.status(404).json({message :'Product is not found'});
+    }
+    try{
+     const order = await new Order({
+       user: req.body.user,
+       product: req.body.product
+     });
+       await order.save();
+      res.status(200).json({order : 'created order successfully'});
+    }catch(error){
+      res.status(500).json({order : 'Invalid Orders'});
+    }
 });
 
 //--updating the orders--
-router.put("/:orderId" , (req,res,next) =>{
-    const id=req.params.orderId;
-    Order.update({_id :id }, req.body)
-           .then(result =>{
-               res.status(200).json({message : "order updated"});
-           }) 
-           .catch(err =>{
-               res.status(500).json({error :err});
-           });
+router.put("/:orderId" , async (req,res,next) =>{
+  const id = req.params.orderId;
+  try{
+    const order = await Order.update({_id :id }, req.body);
+    res.status(200).json({order : 'order  updated'});    
+  }catch(error){
+    res.status(404).json({error : 'No valid orderId is provided'});
+  }         
 });
 
-//--deleting the order--
-router.delete("/:orderId" , (req,res,next) =>{
-    const id=req.params.orderId;
-    Order.remove({_id :id })
-           .then(result =>{
-               res.status(200).json({message : "order deleted"});
-           }) 
-           .catch(err =>{
-               res.status(500).json({error :err});
-           });
-});
+//--deleting the orders--
+router.delete("/:orderId" , async (req,res,next) =>{
+  const id = req.params.orderId;
+  try{
+    const order = await Order.deleteOne({_id :id });
+    res.status(200).json({order : 'deleted order successfully'});
+  }catch(error){
+    res.status(404).json({error : 'No valid orderId is provided'});
+  }});
 
-module.exports=router;
+module.exports = router;

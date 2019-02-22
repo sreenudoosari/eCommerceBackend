@@ -1,6 +1,7 @@
 {
   "app": {
-        "name" :"E-Commerce Backend Project--default"
+        "name" :"E-Commerce Backend Project--default",
+        "jwtPrivateKey" : "ecommerce_jwt_secretkey"
          },
    
    "mail":{

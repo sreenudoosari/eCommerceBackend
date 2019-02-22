@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyparser=require('body-parser');
 //Created a custom middlewares
-const authenticate=require('./middlewares/authentication');
+const auth=require('./middlewares/authentication');
 const logging=require('./middlewares/logging');
 const logger=require('./utils/logger');
 //configuration
@@ -13,21 +13,22 @@ const mongoose=require('mongoose');
 const app = express();
 
 //Routers is added
-const productrouter=require('./routes/products');
-const orderrouter=require('./routes/orders');
-const usersrouter=require('./routes/users');
-const employerrouter=require('./routes/employers');
-const homerouter=require('./routes/home');
+const productrouter = require('./routes/products');
+const orderrouter = require('./routes/orders');
+const usersrouter = require('./routes/users');
+const employerrouter = require('./routes/employers');
+const homerouter = require('./routes/home');
+const authrouter = require('./routes/auth');
 
 //Connecting to th Database
 mongoose.connect("mongodb://localhost/ecommercebackend")
-        .then(() => console.log("Succefully connected to mongodb...."))
+        .then(() => console.log("Successfully connected to mongodb...."))
         .catch((err)=> console.log("Failed to connect to db....", err));
 
 
 //add a middle ware to convert your json bodycle
 app.use(express.json());
-app.use(authenticate);
+//app.use(auth);
 app.use(bodyparser.json());
 
 //configuration the files
@@ -36,11 +37,12 @@ app.use('/api/orders',orderrouter);
 app.use('/api/users',usersrouter);
 app.use('/api/employers',employerrouter);
 app.use('/api/home',homerouter);
+app.use('/api/auth' , authrouter);
 
 //views folder
 app.set('view engine', 'pug');
 app.set('views','./views');
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 //third party middlewares
 app.use(morgan("tiny"));
