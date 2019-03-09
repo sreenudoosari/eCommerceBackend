@@ -1,19 +1,16 @@
+require('express-async-errors');
 const express = require('express');
-const mongoose=require('mongoose');
-const router =express.Router();
+const mongoose = require('mongoose');
+const router = express.Router();
 const Joi = require('joi');
-const auth = require('../middlewares/authentication');
+const auth = require('../middlewares/authorization');
 
 const {Employer,validate} = require('../models/employers');
 
 //--getting all employers--
 router.get("/",auth, async (req,res,next) => {
-    try{
-        const employers = await Employer.find();
-        res.status(200).json(employers);
-        }catch(error){
-          res.status(500).json({error :err});
-        }
+    const employers = await Employer.find();
+    res.status(200).send(employers);
     });
 
 //--getting the Employer by id--
@@ -22,7 +19,7 @@ router.get("/:empId",async (req,res,next) =>{
     try{
         const employers = await Employer.findById({_id :id});
         if(employers){
-            res.status(200).json(employers);
+            res.status(200).send(employers);
         }else{
             res.status(401).json({message : 'empId is not available'});
         }

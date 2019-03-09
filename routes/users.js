@@ -1,28 +1,32 @@
+require('express-async-errors');
 const express = require('express');
 const mongoose=require('mongoose');
 const router =express.Router();
-const Joi = require('joi');
 const lodash = require('lodash');
 const bcrypt = require('bcrypt');
 const {User,validate} = require('../models/users');
-const jwt = require('jsonwebtoken');
+const auth = require('../middlewares/authorization');
+const {Order} = require('../models/orders');
 
 //--getting the users--
-router.get("/", async (req,res,next) => {
-    try{
-    const user = await User.find();
-    res.status(200).json(user);
-    }catch(error){
-      res.status(500).json({error :"No users found"});
-    }
+router.get("/",auth, async (req,res,next) => {
+  const user = await User.find();
+  res.status(200).send(user);
 });
+
+//--get connected user information--
+router.get("/me", auth,async (req,res,next) => {
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).send(user);
+});
+
 //--getting the users By ID--
 router.get("/:userId", async (req,res,next) => {
   const id = req.params.userId;
   try{
     const user = await User.findById({_id :id });
     if(user){
-    res.status(200).json(user);
+    res.status(200).send(user);
     }else{
       res.status(401).json({message :'userId is not available'}); 
     }   
@@ -31,8 +35,16 @@ router.get("/:userId", async (req,res,next) => {
      res.status(404).json({error : 'No valid userId is provided'});
    }         
 });
+
+//--getting orders in users list
+router.get("/:userId/orders",auth, async (req,res,next) => {
+  const order = await Order.find({userId : mongoose.Types.ObjectId(id)});
+  console.log(order);
+  res.status(200).send(order);
+});
+
 //--creating a users--
-router.post("/",  async (req,res,next) => {
+router.post("/",  auth,async (req,res,next) => {
   if(!req.body.name || req.body.name.length<5){
     res.status(400).send("Name is required and should contains 5 characters");
   }

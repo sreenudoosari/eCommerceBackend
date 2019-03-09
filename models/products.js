@@ -1,4 +1,4 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 
@@ -20,8 +20,8 @@ const productSchema= new mongoose.Schema({
     },
     category: {
         type :String,
-        required : true,
-        enum :["Men" ,"Women","Kids"]
+        enum :["Men" ,"Women","Kids"],
+        required: true
     }
     });  
 const Product = mongoose.model('Product', productSchema);
@@ -38,6 +38,7 @@ function validate(product)
        }
     return Joi.validate(product , schema);
 }
+
 module.exports.Product = Product;
 module.exports.validate = validate;
 

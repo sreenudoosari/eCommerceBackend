@@ -1,16 +1,17 @@
 const express = require('express');
-const bodyparser=require('body-parser');
-//Created a custom middlewares
-const auth=require('./middlewares/authentication');
-const logging=require('./middlewares/logging');
-const logger=require('./utils/logger');
-//configuration
-const config=require('config');
-const morgan=require('morgan');
-const mongoose=require('mongoose');
-
-
+const mongoose = require('mongoose');
+const bodyparser = require('body-parser');
 const app = express();
+
+//Created a custom middlewares
+const auth = require('./middlewares/authorization');
+const error = require('./middlewares/error');
+const logger = require('./middlewares/logger')(__filename);
+//const logger=require('./utils/logger');
+
+//configuration
+const config = require('config');
+const morgan = require('morgan');
 
 //Routers is added
 const productrouter = require('./routes/products');
@@ -44,8 +45,19 @@ app.set('view engine', 'pug');
 app.set('views','./views');
 app.use(express.static("public"));
 
+//process.on("uncaughtException", ex => {
+  //  logger.error("uncaughtException occured :",ex);
+  //})
+  process.on("unhandledRejection", ex => {
+    logger.error("unhandledRejection occured :",ex);
+ });
+ 
+const p = Promise.reject(new Error("Asynchronous error occured "));
+p.then(() => console.log("DONE"));
+  
 //third party middlewares
 app.use(morgan("tiny"));
+app.use(error);
 
  app.get('/home',(req,res) =>{
        res.render('index',{appTitle:"Ecommerce BackEnd Project" , message:"Welcome to ECommerce Web Site"});

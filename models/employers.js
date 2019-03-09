@@ -1,6 +1,5 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 const Joi = require('joi');
-const jwt = require('jsonwebtoken');
 
 const  employerSchema= new mongoose.Schema({
     name: {
@@ -26,5 +25,5 @@ const  employerSchema= new mongoose.Schema({
        }
         return Joi.validate(employer , schema);
     }
-    exports.Employer = Employer;
-    exports.validate = validate;
+exports.Employer = Employer;
+exports.validate = validate;

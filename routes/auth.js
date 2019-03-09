@@ -1,11 +1,9 @@
 const express = require('express');
-const mongoose=require('mongoose');
-const router =express.Router();
+const mongoose = require('mongoose');
+const router = express.Router();
 const Joi = require('joi');
-const lodash = require('lodash');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const {User,generateAuthToken} = require('../models/users');
+const {User} = require('../models/users');
 
 
 router.post("/", async (req,res,next) => {

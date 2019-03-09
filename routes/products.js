@@ -1,9 +1,10 @@
+require('express-async-errors');
 const express = require('express');
 const mongoose=require('mongoose');
 const router =express.Router();
-const Joi = require("joi");
-const auth =require('../middlewares/authentication');
+const auth = require('../middlewares/authorization');
 const multer =require('multer');
+
 
 const storage = multer.diskStorage({
   destination: function(req,file,cb){
@@ -33,19 +34,16 @@ const {Product,validate} = require('../models/products');
 //--getting all products--
 router.get("/products", async (req,res,next) => {
     const products = await Product.find();
-    if(products){
-       res.status(200).json(products);  
-    }else{
-        res.status(500).json({error :'No products are not found'});
-    }
-    });
+    res.status(200).send(products); 
+});
+    
 //--getting the product by id--
 router.get("/products/:productId",async (req,res,next) =>{
     const id = req.params.productId;
   try{
     const products = await Product.findById({_id :id});
    if(products){
-    res.status(200).json(products);
+    res.status(200).send(products);
    }else{ 
     res.status(401).json({message :'productId is not available'}); 
    }   
@@ -59,9 +57,9 @@ router.get("/products/:productId",async (req,res,next) =>{
 router.get('/product/category',async (req,res,next) =>{
   try{
     if(req.query.filterByCategory){
-    const product = await Product.findOne({category: req.query.filterByCategory});
+    const product = await Product.find({category: {$in: req.query.filterByCategory}});
     if(product){
-      res.status(200).json(product);
+      res.status(200).send(product);
      }else{ 
       res.status(401).json({message :'category is not available'}); 
      }

@@ -1,20 +1,16 @@
+require('express-async-errors');
 const express = require('express');
 const mongoose=require('mongoose');
 const router =express.Router();
-const Joi = require('joi');
-const auth = require('../middlewares/authentication');
+const auth = require('../middlewares/authorization');
 const {Order} = require('../models/orders');
 const {Product} = require('../models/products');
 const {User} = require('../models/users');
 
 //getting all orders
 router.get('/' , auth,async (req,res) =>{
-  try{
     const order = await Order.find();
-    res.status(200).json(order);
-  }catch(error){
-    res.status(500).json({message: "No Orders found"});
-  }
+    res.status(200).send(order);
 });
 //getting order by Id
 router.get("/:orderId", auth, async (req,res,next) => {
@@ -22,7 +18,7 @@ router.get("/:orderId", auth, async (req,res,next) => {
   try{
     const order = await Order.findById({_id :id });
     if(order){
-    res.status(200).json(order);
+    res.status(200).send(order);
     }else{
       res.status(401).json({message :'orderId is not available'}); 
     }   
@@ -55,7 +51,7 @@ router.post("/", auth,async (req,res,next) => {
 });
 
 //--updating the orders--
-router.put("/:orderId" , async (req,res,next) =>{
+router.put("/:orderId" ,auth, async (req,res,next) =>{
   const id = req.params.orderId;
   try{
     const order = await Order.update({_id :id }, req.body);
