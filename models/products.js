@@ -16,7 +16,7 @@ const productSchema= new mongoose.Schema({
     barcode: Number,
     productImage:{
         type: String,
-        required: true
+       // required: true
     },
     category: {
         type :String,

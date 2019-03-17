@@ -1,3 +1,0 @@
-test("Our first test", () => {
-
-});

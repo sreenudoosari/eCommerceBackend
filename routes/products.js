@@ -45,11 +45,11 @@ router.get("/products/:productId",async (req,res,next) =>{
    if(products){
     res.status(200).send(products);
    }else{ 
-    res.status(401).json({message :'productId is not available'}); 
+    res.status(404).send("productId is not available"); 
    }   
   }
   catch(error){
-    res.status(404).json({error : 'No valid productId is provided'});
+    res.status(404).send("No valid productId is provided");
   }         
 });
 
