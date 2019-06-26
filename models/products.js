@@ -1,44 +1,46 @@
-const mongoose = require('mongoose');
-const Joi = require('joi');
-const jwt = require('jsonwebtoken');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const productSchema= new mongoose.Schema({
-    name: {
-        type :String,
-           minlength :5,
-           maxlength :50,
-           required :true
-        },
-    price: Number,
-    description: String, 
-    brand: String,
-    quantity: Number,
-    barcode: Number,
-    productImage:{
-        type: String,
-       // required: true
-    },
-    category: {
-        type :String,
-        enum :["Men" ,"Women","Kids"],
-        required: true
-    }
-    });  
-const Product = mongoose.model('Product', productSchema);
-function validate(product)
-{
-    const schema = {
-        name : Joi.string().min(5).max(50).required(),
-        price :Joi.number().required(),
-        category :Joi.string().required(),
-        description: Joi.string().required(),
-        brand: Joi.string().required(),
-        quantity: Joi.number().required(),
-        barcode: Joi.number().required()
-       }
-    return Joi.validate(product , schema);
+const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+
+const productSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    minlength: 5,
+    maxlength: 50,
+    required: true
+  },
+  price: Number,
+  description: String,
+  brand: String,
+  quantity: Number,
+  barcode: Number,
+  productImage: {
+    type: String
+    // required: true
+  },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: "Category"
+  }
+});
+const Product = mongoose.model("Product", productSchema);
+function validate(product) {
+  const schema = {
+    name: Joi.string()
+      .min(5)
+      .max(50)
+      .required(),
+    price: Joi.number().required(),
+    category: Joi.string().required()
+    // description: Joi.string().required(),
+    // brand: Joi.string().required(),
+    // quantity: Joi.number().required(),
+    // barcode: Joi.number().required()
+  };
+  return Joi.validate(product, schema);
 }
 
 module.exports.Product = Product;
 module.exports.validate = validate;
-
