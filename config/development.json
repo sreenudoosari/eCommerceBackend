@@ -1,13 +1,13 @@
 {
-      "app": {
-            "name": "E-Commerce Backend Project--development",
-            "jwtPrivateKey": "ecommerce_jwt_secretkey"
-      },
+  "app": {
+    "name": "E-Commerce Backend Project--development",
+    "jwtPrivateKey": "ecommerce_jwt_secretkey"
+  },
 
-      "mail": {
-            "host": "development host server mail"
-      },
-      "db": {
-            "host": "mongodb://localhost/ecommercebackend"
-      }
+  "mail": {
+    "host": "development host server mail"
+  },
+  "db": {
+    "host": "mongodb+srv://sreenud:sreenud@ecommerce-nesqj.mongodb.net/ecommercebackend?retryWrites=true&w=majority"
+  }
 }

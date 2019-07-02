@@ -1,10 +1,12 @@
 {
-    "app": {
-          "name" :"E-Commerce Backend Project--production"
-           },
-     
-     "mail":{
-           "host":"production host server mail"
-            }      
-  
+  "app": {
+    "name": "E-Commerce Backend Project--production"
+  },
+
+  "mail": {
+    "host": "production host server mail"
+  },
+  "db": {
+    "host": "mongodb+srv://sreenud:sreenud@ecommerce-nesqj.mongodb.net/ecommercebackend?retryWrites=true&w=majority"
   }
+}
