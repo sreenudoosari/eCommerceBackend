@@ -5,7 +5,7 @@ const router = express.Router();
 const lodash = require("lodash");
 const bcrypt = require("bcrypt");
 const { User, validate } = require("../models/users");
-const auth = require("../middlewares/authorization");
+const auth = require("../middlewares/auth");
 const { Order } = require("../models/orders");
 
 //--getting the users--
@@ -44,9 +44,9 @@ router.get("/:userId/orders", auth, async (req, res, next) => {
 
 //--creating a users--
 router.post("/", async (req, res) => {
-  if (!req.body.name || req.body.name.length < 5) {
-    res.status(400).send("Name is required and should contains 5 characters");
-  }
+  // if (!req.body.name || req.body.name.length < 5) {
+  //   res.status(400).send("Name is required and should contains 5 characters");
+  // }
   const { error } = validate(req.body);
   if (error) res.status(400).send(error.details[0].message);
   //checking email exists in DB or not

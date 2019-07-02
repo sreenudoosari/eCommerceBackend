@@ -2,7 +2,7 @@ require("express-async-errors");
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const auth = require("../middlewares/authorization");
+const auth = require("../middlewares/auth");
 const { Category, validate } = require("../models/categories");
 
 //--getting all categories--

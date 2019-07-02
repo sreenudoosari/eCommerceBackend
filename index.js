@@ -2,10 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const app = express();
-var cors = require("cors");
+const cors = require("cors");
 
 //Created a custom middlewares
-const auth = require("./middlewares/authorization");
+const auth = require("./middlewares/auth");
 const error = require("./middlewares/error");
 const logger = require("./middlewares/logger")(__filename);
 require("./startup/prod")(app);
@@ -33,7 +33,10 @@ mongoose
   )
   .catch(err => logger.error("Failed to connect to db....", err));
 
-app.use(cors());
+const corsOptions = {
+  exposedHeaders: "x-auth-token"
+};
+app.use(cors(corsOptions));
 
 //add a middle ware to convert your json bodycle
 app.use(express.json());

@@ -2,7 +2,9 @@ require("express-async-errors");
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const auth = require("../middlewares/authorization");
+const auth = require("../middlewares/auth");
+const admin = require("../middlewares/admin");
+
 const multer = require("multer");
 const { Product, validate } = require("../models/products");
 
@@ -85,7 +87,7 @@ router.get("/product/category", async (req, res, next) => {
 router.post(
   "/products",
   //upload.single("productImage"),
-  //auth,
+  auth,
   async (req, res, next) => {
     if (!req.body.name || req.body.name.length < 5) {
       res.status(400).send("Name is required and should contains 5 characters");
@@ -129,7 +131,7 @@ router.put("/products/:productId", async (req, res, next) => {
 });
 
 //--deleting the products--
-router.delete("/products/:productId", async (req, res, next) => {
+router.delete("/products/:productId", [auth, admin], async (req, res, next) => {
   const product = await Product.findByIdAndRemove(req.params.productId);
 
   if (!product)
