@@ -6,8 +6,5 @@
 
   "mail": {
     "host": "development host server mail"
-  },
-  "db": {
-    "host": "mongodb+srv://sreenud:sreenud@ecommerce-nesqj.mongodb.net/ecommercebackend_test?retryWrites=true&w=majority"
   }
 }
