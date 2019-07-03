@@ -27,11 +27,11 @@ const authrouter = require("./routes/auth");
 mongoose
   .connect(config.get("db.host"))
   .then(() =>
-    logger.debug(
+    console.log(
       `Successfully connected to mongodb host : ${config.get("db.host")}`
     )
   )
-  .catch(err => logger.error("Failed to connect to db....", err));
+  .catch(err => console.log("Failed to connect to db....", err));
 
 const corsOptions = {
   exposedHeaders: "x-auth-token"
@@ -86,6 +86,6 @@ console.log("mail server host:", config.get("mail.host"));
 
 const port = process.env.ECBPORT || 3900;
 const server = app.listen(port, () =>
-  logger.debug(`Listening on port ${port}...`)
+  console.log(`Listening on port ${port}...`)
 );
 module.exports = server;
