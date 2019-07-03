@@ -57,7 +57,8 @@ function validateUser(user) {
       .max(150)
       .required(),
     phoneno: Joi.number(),
-    carddetails: Joi.number()
+    carddetails: Joi.number(),
+    isAdmin: Joi.boolean()
   };
   return Joi.validate(user, schema);
 }
