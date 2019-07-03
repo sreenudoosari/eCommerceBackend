@@ -84,7 +84,7 @@ app.post("/", function(req, res) {
 console.log("app name: ", config.get("app.name"));
 console.log("mail server host:", config.get("mail.host"));
 
-const port = process.env.ECBPORT || 3900;
+const port = process.env.PORT || 5000;
 const server = app.listen(port, () =>
   console.log(`Listening on port ${port}...`)
 );
